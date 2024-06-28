@@ -1,14 +1,9 @@
-if (!require(ggplot2)) install.packages("ggplot2")
-
-
-show_palette <- function(x) {
-    par(mai = c(0.2, max(strwidth(x, "inch") + 0.4, na.rm = TRUE), 0.2, 0.4))
-    barplot(rep(1, length(x)), col=x, space = 0.1, axes=FALSE, 
-            names.arg=rev(x), cex.names=0.8, horiz = FALSE, las=0.5)
-    return(invisible(NULL))
+heatmap_gradient <- function(
+        n_breaks = 30,
+        color_set = c("#1d3557", "#f1faee", "#e63946")
+){
+    colorRampPalette(color_set)(n_breaks)
 }
-
-
 
 discrete_4 <- list(
     d1 = c("#7ED7C1", "#F0DBAF", "#DC8686", "#B06161"),
@@ -23,19 +18,55 @@ continuous_4 <- list(
 )
 
 
-show_palette(discrete_4$d1)
+
+show_palette <- function(palette){
+    if (!is.null(dim(palette)) & !is.vector(palette))
+        print("Input should be a vector")
+    
+    ncols <- length(palette)
+    x.left <- 0:(ncols - 1) / ncols
+    x.right <- 1:ncols / ncols
+    y.bottom = rep(0.3, times = ncols)
+    y.top = rep(0.7, times = ncols)
+    
+    par(mar = c(0, 0, 0, 0))
+    plot(
+        x = 0, 
+        y = 0, 
+        type = "n", 
+        xlim = c(0, 1), 
+        ylim = c(0, 1), 
+        axes = FALSE, 
+        xlab = "", 
+        ylab = ""
+    )
+    
+    rect(
+        xleft = x.left,
+        xright = x.right,
+        ybottom = y.bottom,
+        ytop = y.top,
+        col = palette,
+        border = "NA"
+    )
+    
+    if (length(palette) < 7){
+        text(
+            x = (x.left + x.right) / 2,
+            y = (y.bottom + y.top) / 2,
+            labels = palette
+        )
+    }else if (length(palette) < 15){
+        text(
+            x = (x.left + x.right) / 2,
+            y = (y.bottom + y.top) / 2,
+            labels = palette,
+            srt = 90
+        )
+    }
+    
+}
+
+show_palette(heatmap_gradient(n_breaks = 14))
 
 
-par(mar=c(0,0,0,0))
-plot(0, 0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
-
-# Parameters
-line <- 31
-col <- 21
-
-# Rectangles
-rect( rep((0:(col - 1)/col),line) ,  sort(rep((0:(line - 1)/line),col),decreasing=T) , rep((1:col/col),line) , sort(rep((1:line/line),col),decreasing=T),  
-      border = "light gray" , col=colors()[seq(1,651)])
-
-# Text
-text( rep((0:(col - 1)/col),line)+0.02 ,  sort(rep((0:(line - 1)/line),col),decreasing=T)+0.01 , seq(1,651)  , cex=0.5)
