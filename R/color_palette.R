@@ -67,6 +67,5 @@ show_palette <- function(palette){
     
 }
 
-show_palette(heatmap_gradient(n_breaks = 14))
 
 

@@ -7,12 +7,19 @@ suppressMessages({
 })
 
 
-num2asterisk <- function(x){
+num2asterisk <- function(x, superscript = FALSE){
+    if (superscript) .symbols <- c("***", "**", "*", common::supsc("ns"))
+    if (!superscript) .symbols <- c("***", "**", "*", "ns")
     # UTF-8 code: "\U002A"
-    if (x <= 0.001) return("***")
-    if (x <= 0.01 & x > 0.001) return("**")
-    if (x <= 0.05 & x > 0.01) return("*")
-    if (x > 0.05) return(common::supsc("ns"))
+    # if (x <= 0.001) return(.symbols[1])
+    # if (x <= 0.01 & x > 0.001) return(.symbols[2])
+    # if (x <= 0.05 & x > 0.01) return(.symbols[3])
+    # if (x > 0.05) return(.symbols[4])
+    symnum(
+            x,
+            cutpoints = c(0, 0.001, 0.01, 0.05, 1),
+            symbols = .symbols
+        )
 }
 
 
@@ -31,20 +38,57 @@ theme_bw_01 <- theme_bw() +
         legend.position.inside = c(0.5, 0.95),
         legend.direction = "horizontal",
         legend.background = element_blank(),
+        legend.title = element_markdown(
+            family = "arial", 
+            face = "bold", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
         legend.text = element_markdown(
             family = "arial", 
             face = "plain", 
             size = 20, 
             margin = ggplot2::margin(r = 7, l = 7)
         ),
-        legend.key.size = grid::unit(x = 0.7, units = "cm"),
-        legend.key.spacing = grid::unit(x = 0.5, units = "cm"),
+        legend.key.size = grid::unit(x = 1, units = "lines"),
+        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
+        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
         
-        axis.title.x = element_markdown(margin = ggplot2::margin(r = 7)),
+        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
         axis.line.x.bottom = element_line(linewidth = 0.6, lineend = "round"),
         
-        axis.title.y = element_markdown(margin = ggplot2::margin(r = 7)),
+        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9)),
         axis.line.y.left = element_line(linewidth = 0.6, lineend = "round")
+    )
+
+
+theme_bw_02 <- theme_bw() +
+    theme(
+        text = element_text(family = "arial", face = "bold", size = 20),
+        
+        legend.position = "top",
+        legend.position.inside = c(0.5, 0.95),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.title = element_markdown(
+            family = "arial", 
+            face = "bold", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.text = element_markdown(
+            family = "arial", 
+            face = "plain", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.key.size = grid::unit(x = 1, units = "lines"),
+        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
+        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
+        
+        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
+        
+        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9))
     )
 
 
@@ -143,7 +187,7 @@ geom_signif <- function(
             alternative = "two.sided",  # c("two.sided", "less", "greater") 
             var.equal = FALSE, 
             paired = FALSE,
-            exact = TRUE,
+            exact = FALSE,
             mu = 0,
             conf.level = 0.95
         ),
