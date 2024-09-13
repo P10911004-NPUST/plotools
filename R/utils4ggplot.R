@@ -4,94 +4,38 @@ suppressMessages({
     if (!require(ggsignif)) install.packages("ggsignif")
     if (!require(grid)) install.packages("grid")
     if (!require(common)) install.packages("common") 
+    if (!require(signs)) install.packages("signs") 
+    windowsFonts(
+        palatino = windowsFont("Palatino Linotype"),
+        times = windowsFont("Times New Roman"),
+        arial = windowsFont("Arial")
+    )
 })
 
 
-num2asterisk <- function(x, superscript = FALSE){
-    if (superscript) .symbols <- c("***", "**", "*", common::supsc("ns"))
-    if (!superscript) .symbols <- c("***", "**", "*", "ns")
+# Self-defined function ====
+num2asterisk <- function(
+        x, 
+        cutpoints   = c(0, 0.001, 0.01, 0.05, 1),
+        symbols     = c("***", "**", "*", "ns"),
+        superscript = FALSE
+){
+    # if (superscript) symbols <- c("***", "**", "*", common::supsc("ns"))
+    if (superscript) symbols <- sapply(symbols, common::supsc)
     # UTF-8 code: "\U002A"
-    # if (x <= 0.001) return(.symbols[1])
-    # if (x <= 0.01 & x > 0.001) return(.symbols[2])
-    # if (x <= 0.05 & x > 0.01) return(.symbols[3])
-    # if (x > 0.05) return(.symbols[4])
+    # if (x <= 0.001) return(symbols[1])
+    # if (x <= 0.01 & x > 0.001) return(symbols[2])
+    # if (x <= 0.05 & x > 0.01) return(symbols[3])
+    # if (x > 0.05) return(symbols[4])
     symnum(
-            x,
-            cutpoints = c(0, 0.001, 0.01, 0.05, 1),
-            symbols = .symbols
-        )
+        x,
+        cutpoints = cutpoints,
+        symbols = symbols
+    )
 }
 
 
-windowsFonts(
-    palatino = windowsFont("Palatino Linotype"),
-    times = windowsFont("Times New Roman"),
-    arial = windowsFont("Arial")
-)
-
-
-theme_bw_01 <- theme_bw() +
-    theme(
-        text = element_text(family = "arial", face = "bold", size = 20),
-        
-        legend.position = "top",
-        legend.position.inside = c(0.5, 0.95),
-        legend.direction = "horizontal",
-        legend.background = element_blank(),
-        legend.title = element_markdown(
-            family = "arial", 
-            face = "bold", 
-            size = 20, 
-            margin = ggplot2::margin(r = 7, l = 7)
-        ),
-        legend.text = element_markdown(
-            family = "arial", 
-            face = "plain", 
-            size = 20, 
-            margin = ggplot2::margin(r = 7, l = 7)
-        ),
-        legend.key.size = grid::unit(x = 1, units = "lines"),
-        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
-        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
-        
-        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
-        axis.line.x.bottom = element_line(linewidth = 0.6, lineend = "round"),
-        
-        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9)),
-        axis.line.y.left = element_line(linewidth = 0.6, lineend = "round")
-    )
-
-
-theme_bw_02 <- theme_bw() +
-    theme(
-        text = element_text(family = "arial", face = "bold", size = 20),
-        
-        legend.position = "top",
-        legend.position.inside = c(0.5, 0.95),
-        legend.direction = "horizontal",
-        legend.background = element_blank(),
-        legend.title = element_markdown(
-            family = "arial", 
-            face = "bold", 
-            size = 20, 
-            margin = ggplot2::margin(r = 7, l = 7)
-        ),
-        legend.text = element_markdown(
-            family = "arial", 
-            face = "plain", 
-            size = 20, 
-            margin = ggplot2::margin(r = 7, l = 7)
-        ),
-        legend.key.size = grid::unit(x = 1, units = "lines"),
-        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
-        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
-        
-        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
-        
-        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9))
-    )
-
-
+# Customized geom function ====
 geom_point <- function(
         size = 2,
         alpha = 0.5,
@@ -191,12 +135,13 @@ geom_signif <- function(
             mu = 0,
             conf.level = 0.95
         ),
-        map_signif_level = function(x){
-            if (x <= 0.001) return("\U002A\U002A\U002A")
-            if (x <= 0.01 & x > 0.001) return("\U002A\U002A")
-            if (x <= 0.05 & x > 0.01) return("\U002A")
-            if (x > 0.05) return(common::supsc("ns"))
-        },
+        map_signif_level = x -> num2asterisk(x),
+        # map_signif_level = function(x){
+        #     if (x <= 0.001) return("\U002A\U002A\U002A")
+        #     if (x <= 0.01 & x > 0.001) return("\U002A\U002A")
+        #     if (x <= 0.05 & x > 0.01) return("\U002A")
+        #     if (x > 0.05) return(common::supsc("ns"))
+        # },
         ...
 ){
     ggsignif::geom_signif(
@@ -258,4 +203,68 @@ vline_grob <- function(x, ymin, ymax, linewidth = 1.5){
 }
 
 
+# Theme ====
+theme_bw_01 <- theme_bw() +
+    theme(
+        text = element_text(family = "arial", face = "bold", size = 20),
+        
+        plot.title = element_markdown(family = "arial", face = "bold", size = 20),
+        plot.subtitle = element_markdown(family = "arial", face = "bold", size = 20),
+        
+        legend.position = "top",
+        legend.position.inside = c(0.5, 0.95),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.title = element_markdown(
+            family = "arial", 
+            face = "bold", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.text = element_markdown(
+            family = "arial", 
+            face = "plain", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.key.size = grid::unit(x = 1, units = "lines"),
+        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
+        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
+        
+        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
+        axis.line.x = element_line(linewidth = 0.6, lineend = "round"),
+        
+        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9)),
+        axis.line.y = element_line(linewidth = 0.6, lineend = "round")
+    )
+
+
+theme_bw_02 <- theme_bw() +
+    theme(
+        text = element_text(family = "arial", face = "bold", size = 20),
+        
+        legend.position = "top",
+        legend.position.inside = c(0.5, 0.95),
+        legend.direction = "horizontal",
+        legend.background = element_blank(),
+        legend.title = element_markdown(
+            family = "arial", 
+            face = "bold", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.text = element_markdown(
+            family = "arial", 
+            face = "plain", 
+            size = 20, 
+            margin = ggplot2::margin(r = 7, l = 7)
+        ),
+        legend.key.size = grid::unit(x = 1, units = "lines"),
+        legend.key.spacing.x = grid::unit(x = 0.7, units = "lines"),
+        legend.key.spacing.y = grid::unit(x = 0.5, units = "lines"),
+        
+        axis.title.x = element_markdown(margin = ggplot2::margin(t = 7)),
+        
+        axis.title.y = element_markdown(margin = ggplot2::margin(r = 9))
+    )
 
