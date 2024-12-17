@@ -17,16 +17,12 @@ suppressMessages({
 num2asterisk <- function(
         x, 
         cutpoints   = c(0, 0.001, 0.01, 0.05, 1),
-        symbols     = c("***", "**", "*", "ns"),
+        symbols     = c("\U002A\U002A\U002A", "\U002A\U002A", "\U002A", "ns"),
         superscript = FALSE
 ){
+    symbols <- as.character(symbols)
     # if (superscript) symbols <- c("***", "**", "*", common::supsc("ns"))
     if (superscript) symbols <- sapply(symbols, common::supsc)
-    # UTF-8 code: "\U002A"
-    # if (x <= 0.001) return(symbols[1])
-    # if (x <= 0.01 & x > 0.001) return(symbols[2])
-    # if (x <= 0.05 & x > 0.01) return(symbols[3])
-    # if (x > 0.05) return(symbols[4])
     symnum(
         x,
         cutpoints = cutpoints,
@@ -159,7 +155,8 @@ geom_signif <- function(
 }
 
 
-ggsave <- function(
+ggsave2 <- function(
+        plot = ggplot2::last_plot(),
         filename,
         path = "./",
         device = "jpeg",
@@ -170,6 +167,7 @@ ggsave <- function(
         ...
 ){
     ggplot2::ggsave(
+        plot = plot,
         filename = filename,
         path = path,
         device = device,
