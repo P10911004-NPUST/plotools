@@ -166,6 +166,8 @@ ggsave2 <- function(
         width = 17,
         ...
 ){
+    if (!dir.exists(path)) dir.create(path, recursive = TRUE)
+        
     ggplot2::ggsave(
         plot = plot,
         filename = filename,
