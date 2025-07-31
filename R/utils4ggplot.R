@@ -14,6 +14,13 @@ suppressMessages({
 
 
 # Self-defined function ====
+asterisk <- function(pvalue){
+    if (pvalue <= 0.001) return("\U002A\U002A\U002A")
+    if (pvalue <= 0.01 & pvalue > 0.001) return("\U002A\U002A")
+    if (pvalue <= 0.05 & pvalue > 0.01) return("\U002A")
+    if (pvalue > 0.05) return(common::supsc("ns"))
+}
+
 num2asterisk <- function(
         x, 
         cutpoints   = c(0, 0.001, 0.01, 0.05, 1),
@@ -29,6 +36,8 @@ num2asterisk <- function(
         symbols = symbols
     )
 }
+
+
 
 
 # Customized geom function ====
@@ -167,7 +176,7 @@ ggsave2 <- function(
         ...
 ){
     if (!dir.exists(path)) dir.create(path, recursive = TRUE)
-        
+    
     ggplot2::ggsave(
         plot = plot,
         filename = filename,
