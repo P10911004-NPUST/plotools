@@ -27,9 +27,8 @@ discrete_4 <- list(
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Color palettes for color blindness ====
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-color_blindness_IBM <- c("#648FFF", "#785EF0", "#DC267F", "#FE6100", "#FFB000") # IBM Design Library
-color_blindness_Wong <- c(
-    # Wong, B. Points of view: Color blindness. Nat Methods 8, 441 (2011). 
+colorblind_Wong <- c(
+    # Wong, B. Points of view: Color blindness. Nat Methods 8, 441 (2011).
     # https://doi.org/10.1038/nmeth.1618
     "Black"           = "#000000", # rgb_to_hexadecimal(  0,   0,   0)
     "Orange"          = "#E69F00", # rgb_to_hexadecimal(230, 159,   0)
@@ -40,32 +39,68 @@ color_blindness_Wong <- c(
     "Vermillion"      = "#D55E00", # rgb_to_hexadecimal(213,  94,   0)
     "#Reddish-purple" = "#CC79A7"  # rgb_to_hexadecimal(204, 121, 167)
 )
-color_blindness_Tol <- c("#332288", "#117733", "#44AA99", "#88CCEE", "#DDCC77", "#CC6677", "#AA4499", "#882255") # Paul Tol
 
+colorblind_Kelly_22 <- c(
+
+)
+
+colorblind_Tol_muted <- c(
+    ## Paul Tol's Muted
+    "#DDDDDD",
+    "#332288",
+    "#117733",
+    "#44AA99",
+    "#88CCEE",
+    "#DDCC77",
+    "#CC6677",
+    "#AA4499",
+    "#882255"
+) # Paul Tol
+
+colorblind_Okabe <- c(
+    ## Okabe and Ito
+    "#000000",
+    "#009E73",
+    "#0072B2",
+    "#56B4E9",
+    "#F0E442",
+    "#E69F00",
+    "#D55E00",
+    "#CC79A7"
+)
+
+colorblind_IBM <- c(
+    ## IBM Design Library
+    "#648FFF",
+    "#785EF0",
+    "#DC267F",
+    "#FE6100",
+    "#FFB000"
+)
 
 
 show_palette <- function(palette){
     if (!is.null(dim(palette)) & !is.vector(palette))
         print("Input should be a vector")
-    
+
     ncols <- length(palette)
     x.left <- 0:(ncols - 1) / ncols
     x.right <- 1:ncols / ncols
     y.bottom = rep(0.3, times = ncols)
     y.top = rep(0.7, times = ncols)
-    
+
     par(mar = c(0, 0, 0, 0))
     plot(
-        x = 0, 
-        y = 0, 
-        type = "n", 
-        xlim = c(0, 1), 
-        ylim = c(0, 1), 
-        axes = FALSE, 
-        xlab = "", 
+        x = 0,
+        y = 0,
+        type = "n",
+        xlim = c(0, 1),
+        ylim = c(0, 1),
+        axes = FALSE,
+        xlab = "",
         ylab = ""
     )
-    
+
     rect(
         xleft = x.left,
         xright = x.right,
@@ -74,7 +109,7 @@ show_palette <- function(palette){
         col = palette,
         border = "NA"
     )
-    
+
     if (length(palette) < 7){
         text(
             x = (x.left + x.right) / 2,
@@ -89,7 +124,7 @@ show_palette <- function(palette){
             srt = 90
         )
     }
-    
+
 }
 
 
